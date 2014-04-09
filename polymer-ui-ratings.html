@@ -29,12 +29,14 @@ license that can be found in the LICENSE file.
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../polymer-ui-theme-aware/polymer-ui-theme-aware.html">
 
-<polymer-element name="polymer-ui-ratings" extends="polymer-ui-theme-aware" attributes="count value autofocus" tabindex="0" on-keydown="{{keydownAction}}" role="slider">
+<polymer-element name="polymer-ui-ratings" extends="polymer-ui-theme-aware" attributes="count value autofocus">
   <template>
     <link rel="stylesheet" href="polymer-ui-ratings.css">
-    <template repeat="{{star in stars}}">
-      <span id="star" index="{{star.index}}" class="{{star.starClass}}" on-tap="{{updateValue}}"></span>
-    </template>
+    <span id="container" tabindex="0" on-keydown="{{keydownAction}}" role="slider">
+      <template repeat="{{star in stars}}">
+        <span id="star" index="{{star.index}}" class="{{star.starClass}}" on-tap="{{updateValue}}"></span>
+      </template>
+    </span>
   </template>
   <script>
     Polymer('polymer-ui-ratings', {
@@ -60,26 +62,27 @@ license that can be found in the LICENSE file.
        */
       value: 0,
       ready: function() {
-        this.setAttribute('aria-valuemin', 0);
+        this.$.container.setAttribute('aria-valuemin', 0);
         this.countChanged();
         if (this.autofocus)
-          this.focus();
+          this.$.container.focus();
       },
       countChanged: function() {
         this.stars = [];
         for (var i = 0; i < this.count; i++) {
           this.stars.push({index: i});
         }
-        this.setAttribute('aria-valuemax', this.count);
+        this.$.container.setAttribute('aria-valuemax', this.count);
         this.valueChanged();
       },
       valueChanged: function() {
         this.stars && this.stars.forEach(function(s, i) {
           s.starClass = i < this.value ? 'full' : '';
         }.bind(this));
-        this.setAttribute('aria-valuenow', this.value);
-        this.setAttribute('aria-valuetext',
-                          this.value + (this.value == 1 ? ' star' : ' stars'));
+        this.$.container.setAttribute('aria-valuenow', this.value);
+        this.$.container.setAttribute(
+            'aria-valuetext',
+             this.value + (this.value == 1 ? ' star' : ' stars'));
       },
       updateValue: function(event, detail, sender) {
         var s = sender.templateInstance.model.star;
