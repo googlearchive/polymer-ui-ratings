@@ -29,12 +29,14 @@ license that can be found in the LICENSE file.
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../polymer-ui-theme-aware/polymer-ui-theme-aware.html">
 
-<polymer-element name="polymer-ui-ratings" extends="polymer-ui-theme-aware" attributes="count value autofocus" tabindex="0" on-keydown="{{keydownAction}}" role="slider">
+<polymer-element name="polymer-ui-ratings" extends="polymer-ui-theme-aware" attributes="count value autofocus">
   <template>
     <link rel="stylesheet" href="polymer-ui-ratings.css">
-    <template repeat="{{star in stars}}">
-      <span id="star" class="{{ {full: star < value} | tokenList }}" on-tap="{{updateValue}}"></span>
-    </template>
+    <span id="container" tabindex="0" on-keydown="{{keydownAction}}" role="slider" aria-valuemax="{{count}}" aria-valuemin="0" aria-valuenow="{{value}}">
+      <template repeat="{{star in stars}}">
+        <span id="star" class="{{ {full: star < value} | tokenList }}" on-tap="{{updateValue}}"></span>
+      </template>
+    </span>
   </template>
   <script>
     Polymer('polymer-ui-ratings', {
@@ -60,7 +62,6 @@ license that can be found in the LICENSE file.
        */
       value: 0,
       ready: function() {
-        this.setAttribute('aria-valuemin', 0);
         this.countChanged();
         if (this.autofocus) {
           this.focus();
@@ -71,12 +72,11 @@ license that can be found in the LICENSE file.
         for (var i = 0; i < this.count; i++) {
           this.stars.push(i);
         }
-        this.setAttribute('aria-valuemax', this.count);
       },
       valueChanged: function() {
-        this.setAttribute('aria-valuenow', this.value);
-        this.setAttribute('aria-valuetext',
-                          this.value + (this.value == 1 ? ' star' : ' stars'));
+        this.$.container.setAttribute(
+            'aria-valuetext',
+             this.value + (this.value == 1 ? ' star' : ' stars'));
       },
       updateValue: function(event, detail, sender) {
         var s = sender.templateInstance.model.star;
