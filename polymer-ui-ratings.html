@@ -75,6 +75,8 @@ license that can be found in the LICENSE file.
       },
       valueChanged: function() {
         this.setAttribute('aria-valuenow', this.value);
+        this.setAttribute('aria-valuetext',
+                          this.value + (this.value == 1 ? ' star' : ' stars'));
       },
       updateValue: function(event, detail, sender) {
         var s = sender.templateInstance.model.star;
