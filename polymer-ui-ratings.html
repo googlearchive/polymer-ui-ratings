@@ -29,7 +29,7 @@ license that can be found in the LICENSE file.
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../polymer-ui-theme-aware/polymer-ui-theme-aware.html">
 
-<polymer-element name="polymer-ui-ratings" extends="polymer-ui-theme-aware" attributes="count value autofocus" tabindex="0">
+<polymer-element name="polymer-ui-ratings" extends="polymer-ui-theme-aware" attributes="count value autofocus" tabindex="0" on-keydown="{{keydownAction}}">
   <template>
     <link rel="stylesheet" href="polymer-ui-ratings.css">
     <template repeat="{{star in stars}}">
@@ -40,7 +40,7 @@ license that can be found in the LICENSE file.
     Polymer('polymer-ui-ratings', {
       /**
        * Whether to focus this element on document load.
-       * 
+       *
        */
       autofocus: false,
       /**
@@ -79,6 +79,42 @@ license that can be found in the LICENSE file.
       updateValue: function(event, detail, sender) {
         var s = sender.templateInstance.model.star;
         this.value = s.index + (s.starClass ? 0 : 1);
+      },
+      incrementValue: function() {
+        if (this.value < this.count)
+          this.value++;
+      },
+      decrementValue: function() {
+        if (this.value > 0)
+          this.value--;
+      },
+      keydownAction: function(event, detail, sender) {
+        var END_KEY = 35;
+        var HOME_KEY = 36;
+        var LEFT_KEY = 37;
+        var UP_KEY = 38;
+        var RIGHT_KEY = 39;
+        var DOWN_KEY = 40;
+        if (event.keyCode === END_KEY) {
+          this.value = this.count;
+          event.preventDefault();
+          return;
+        }
+        if (event.keyCode === HOME_KEY) {
+          this.value = 0;
+          event.preventDefault();
+          return;
+        }
+        if (event.keyCode === RIGHT_KEY || event.keyCode === UP_KEY) {
+          this.incrementValue();
+          event.preventDefault();
+          return;
+        }
+        if (event.keyCode === LEFT_KEY || event.keyCode === DOWN_KEY) {
+          this.decrementValue();
+          event.preventDefault();
+          return;
+        }
       }
     });
   </script>
