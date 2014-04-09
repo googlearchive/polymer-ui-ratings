@@ -29,7 +29,7 @@ license that can be found in the LICENSE file.
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../polymer-ui-theme-aware/polymer-ui-theme-aware.html">
 
-<polymer-element name="polymer-ui-ratings" extends="polymer-ui-theme-aware" attributes="count value autofocus" tabindex="0">
+<polymer-element name="polymer-ui-ratings" extends="polymer-ui-theme-aware" attributes="count value autofocus" tabindex="0" on-keydown="{{keydownAction}}">
   <template>
     <link rel="stylesheet" href="polymer-ui-ratings.css">
     <template repeat="{{star in stars}}">
@@ -74,6 +74,51 @@ license that can be found in the LICENSE file.
       updateValue: function(event, detail, sender) {
         var s = sender.templateInstance.model.star;
         this.value = s + Number(s >= this.value);
+      },
+      incrementValue: function() {
+        if (this.value < this.count) {
+          this.value++;
+        }
+      },
+      decrementValue: function() {
+        if (this.value > 0) {
+          this.value--;
+        }
+      },
+      keydownAction: function(event, detail, sender) {
+        var keyIdentifier = event.keyIdentifier || event.key;
+        switch (keyIdentifier) {
+        case "End":
+          this.value = this.count;
+          event.preventDefault();
+          return;
+        case "Home":
+          this.value = 0;
+          event.preventDefault();
+          return;
+        case "Right":
+        case "Up":
+          this.incrementValue();
+          event.preventDefault();
+          return;
+        case "Left":
+        case "Down":
+          this.decrementValue();
+          event.preventDefault();
+          return;
+        }
+        if (this.count < 10) {
+          var keyValue = Number.parseInt(keyIdentifier, 10);
+          if (isNaN(keyValue) && keyIdentifier.match(/^U\+/)) {
+            var code = Number.parseInt(keyIdentifier.replace(/^U\+/, ''), 16);
+            keyValue = String.fromCharCode(code);
+          }
+          if (keyValue <= this.count) {
+            this.value = keyValue;
+            event.preventDefault();
+            return;
+          }
+        }
       }
     });
   </script>
