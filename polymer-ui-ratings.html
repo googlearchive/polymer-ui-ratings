@@ -29,7 +29,7 @@ license that can be found in the LICENSE file.
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../polymer-ui-theme-aware/polymer-ui-theme-aware.html">
 
-<polymer-element name="polymer-ui-ratings" extends="polymer-ui-theme-aware" attributes="count value">
+<polymer-element name="polymer-ui-ratings" extends="polymer-ui-theme-aware" attributes="count value autofocus" tabindex="0">
   <template>
     <link rel="stylesheet" href="polymer-ui-ratings.css">
     <template repeat="{{star in stars}}">
@@ -38,6 +38,11 @@ license that can be found in the LICENSE file.
   </template>
   <script>
     Polymer('polymer-ui-ratings', {
+      /**
+       * Whether to focus this element on document load.
+       * 
+       */
+      autofocus: false,
       /**
        * Number of stars to display.
        *
@@ -56,6 +61,8 @@ license that can be found in the LICENSE file.
       value: 0,
       ready: function() {
         this.countChanged();
+        if (this.autofocus)
+          this.focus();
       },
       countChanged: function() {
         this.stars = [];
