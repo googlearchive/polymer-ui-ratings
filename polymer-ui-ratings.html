@@ -34,7 +34,7 @@ license that can be found in the LICENSE file.
     <link rel="stylesheet" href="polymer-ui-ratings.css">
     <span id="container" tabindex="0" on-keydown="{{keydownAction}}" role="slider">
       <template repeat="{{star in stars}}">
-        <span id="star" index="{{star.index}}" class="{{star.starClass}}" on-tap="{{updateValue}}"></span>
+        <span id="star" class="{{ {full: star < value} | tokenList }}" on-tap="{{updateValue}}"></span>
       </template>
     </span>
   </template>
@@ -70,15 +70,12 @@ license that can be found in the LICENSE file.
       countChanged: function() {
         this.stars = [];
         for (var i = 0; i < this.count; i++) {
-          this.stars.push({index: i});
+          this.stars.push(i);
         }
         this.$.container.setAttribute('aria-valuemax', this.count);
         this.valueChanged();
       },
       valueChanged: function() {
-        this.stars && this.stars.forEach(function(s, i) {
-          s.starClass = i < this.value ? 'full' : '';
-        }.bind(this));
         this.$.container.setAttribute('aria-valuenow', this.value);
         this.$.container.setAttribute(
             'aria-valuetext',
@@ -86,7 +83,7 @@ license that can be found in the LICENSE file.
       },
       updateValue: function(event, detail, sender) {
         var s = sender.templateInstance.model.star;
-        this.value = s.index + (s.starClass ? 0 : 1);
+        this.value = s + Number(s >= this.value);
       },
       incrementValue: function() {
         if (this.value < this.count)
