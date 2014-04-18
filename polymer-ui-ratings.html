@@ -33,7 +33,7 @@ license that can be found in the LICENSE file.
   <template>
     <link rel="stylesheet" href="polymer-ui-ratings.css">
     <template repeat="{{star in stars}}">
-      <span id="star" index="{{star.index}}" class="{{star.starClass}}" on-tap="{{updateValue}}"></span>
+      <span id="star" class="{{ {full: star < value} | tokenList }}" on-tap="{{updateValue}}"></span>
     </template>
   </template>
   <script>
@@ -60,18 +60,12 @@ license that can be found in the LICENSE file.
       countChanged: function() {
         this.stars = [];
         for (var i = 0; i < this.count; i++) {
-          this.stars.push({index: i});
+          this.stars.push(i);
         }
-        this.valueChanged();
-      },
-      valueChanged: function() {
-        this.stars && this.stars.forEach(function(s, i) {
-          s.starClass = i < this.value ? 'full' : '';
-        }.bind(this));
       },
       updateValue: function(event, detail, sender) {
         var s = sender.templateInstance.model.star;
-        this.value = s.index + (s.starClass ? 0 : 1);
+        this.value = s + Number(s >= this.value);
       }
     });
   </script>
